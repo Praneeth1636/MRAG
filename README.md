@@ -37,46 +37,9 @@ The entire stack runs locally on your machine via Ollama. No API keys. No cloud 
 
 ## Architecture
 
-```mermaid
-graph TD
-    subgraph Input ["Document Ingestion"]
-        PDF["📄 PDFs"] --> PROC
-        IMG["🖼 Images"] --> PROC
-        TXT["📝 Text / CSV"] --> PROC
-        PROC["Document Processors<br/><i>PyMuPDF · LLaVA · OCR</i>"]
-    end
-
-    subgraph Pipeline ["RAG Pipeline"]
-        PROC --> CHUNK["Hybrid Chunker<br/><i>Semantic + Recursive</i>"]
-        CHUNK --> EMB["Embedder<br/><i>MiniLM-L6-v2</i>"]
-        EMB --> STORE[("ChromaDB<br/><i>Vector Store</i>")]
-
-        QUERY["User Question"] --> RET["Retriever"]
-        STORE --> RET
-        RET --> RERANK["Re-ranker"]
-        RERANK --> GEN["Generator<br/><i>LLaMA 3 / Mistral via Ollama</i>"]
-        GEN --> SSE["SSE Stream<br/><i>Token-by-token</i>"]
-    end
-
-    subgraph Eval ["Evaluation Framework"]
-        FAITH["Faithfulness<br/><i>LLM-as-Judge</i>"]
-        REL["Relevance<br/><i>Reverse Question Gen</i>"]
-        PREC["Precision@K<br/><i>Weighted Ranking</i>"]
-        REC["Recall<br/><i>Coverage Check</i>"]
-        LAT["Latency<br/><i>p50 · p95 · p99</i>"]
-    end
-
-    subgraph Frontend ["React Frontend"]
-        CHAT["💬 Chat UI<br/><i>Streaming + Sources</i>"]
-        INGEST["📤 Ingest Page<br/><i>Drag & Drop</i>"]
-        EVAL_UI["📊 Eval Dashboard<br/><i>Gauges · Radar · Table</i>"]
-        COLL["📁 Collections"]
-    end
-
-    SSE --> CHAT
-    GEN -.->|"judges output"| Eval
-    EVAL_UI --> Eval
-```
+<p align="center">
+  <img src="docs/architecture.png" alt="System Architecture" width="900">
+</p>
 
 ---
 
