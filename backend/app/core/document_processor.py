@@ -17,10 +17,14 @@ from app.processors.text_processor import TextProcessor
 class DocumentProcessor:
     """High-level pipeline to process, chunk, embed, and store documents."""
 
-    def __init__(self, client: chromadb.ClientAPI | None = None) -> None:
+    def __init__(
+        self,
+        client: chromadb.ClientAPI | None = None,
+        embedder: Embedder | None = None,
+    ) -> None:
         self._client = client or get_chroma_client()
         self._chunker = Chunker()
-        self._embedder = Embedder()
+        self._embedder = embedder or Embedder()
         self._processors: Dict[str, BaseProcessor] = {
             ".pdf": PDFProcessor(),
             ".png": ImageProcessor(),

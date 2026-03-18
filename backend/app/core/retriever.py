@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Optional
 
 import chromadb
 from chromadb import Collection
-from chromadb.utils import embedding_functions
 
 from app.config import get_settings
 from app.core.embedder import Embedder

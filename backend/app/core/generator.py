@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, AsyncGenerator, Dict, Optional
 
 import httpx
+import json
 
 from app.config import get_settings
 
@@ -78,8 +79,8 @@ class Generator:
                 if not line:
                     continue
                 try:
-                    data = response.json()  # type: ignore[assignment]
-                except Exception:
+                    data = json.loads(line)
+                except json.JSONDecodeError:
                     continue
                 token = data.get("response", "")
                 if token:

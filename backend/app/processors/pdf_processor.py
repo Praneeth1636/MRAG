@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List
 
+import base64
 import fitz  # PyMuPDF
 import httpx
 import pytesseract
@@ -66,6 +67,10 @@ class PDFProcessor(BaseProcessor):
                         content_type="image_caption",
                     ),
                 )
+                try:
+                    image_path.unlink()
+                except OSError:
+                    pass
 
         # Fallback to OCR if no extractable text.
         if not has_text:
@@ -108,10 +113,14 @@ class PDFProcessor(BaseProcessor):
             "Describe this image in detail, including any text, diagrams, charts, "
             "or data visible."
         )
+        image_bytes = Path(image_path).read_bytes()
+        image_b64 = base64.b64encode(image_bytes).decode("utf-8")
+
         payload = {
             "model": settings.image_model,
             "prompt": prompt,
-            "images": [image_path],
+            "images": [image_b64],
+            "stream": False,
         }
         async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(f"{base_url}/api/generate", json=payload)

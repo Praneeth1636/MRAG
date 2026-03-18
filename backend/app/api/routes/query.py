@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import time
 from typing import AsyncGenerator
+import asyncio
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
@@ -112,7 +113,7 @@ async def _stream_rag_response(
         }
         yield f"event: source\ndata: {json.dumps(source_data)}\n\n"
         if delay_ms > 0:
-            time.sleep(delay_ms / 1000.0)
+            await asyncio.sleep(delay_ms / 1000.0)
 
     context = pipeline.build_context(chunks)
     prompt = pipeline.build_prompt(request.question, context)
@@ -124,7 +125,7 @@ async def _stream_rag_response(
         full_text += token
         yield f"event: token\ndata: {json.dumps({'token': token})}\n\n"
         if delay_ms > 0:
-            time.sleep(delay_ms / 1000.0)
+            await asyncio.sleep(delay_ms / 1000.0)
 
     generation_ms = (time.perf_counter() - start_gen) * 1000.0
     total_ms = (time.perf_counter() - start_total) * 1000.0

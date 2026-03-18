@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
+import asyncio
 import chromadb
 import httpx
 from fastapi import Depends, FastAPI, Request
+import structlog
 
 from app.config import get_settings
 from app.core.document_processor import DocumentProcessor
@@ -32,6 +34,7 @@ async def init_services(app: FastAPI) -> None:
     setup_logging()
     settings = get_settings()
 
+    logger = structlog.get_logger()
     container = ServiceContainer()
 
     # Chroma client
@@ -43,14 +46,33 @@ async def init_services(app: FastAPI) -> None:
         timeout=settings.ollama_timeout_seconds,
     )
 
-    # Verify Ollama connection
-    resp = await container.ollama_client.get("/api/tags")
-    resp.raise_for_status()
+    # Verify Ollama connection with retries (degraded mode if unavailable).
+    ollama_ready = False
+    for attempt in range(10):
+        try:
+            resp = await container.ollama_client.get("/api/tags")
+            resp.raise_for_status()
+            ollama_ready = True
+            logger.info("ollama_connected", attempt=attempt + 1)
+            break
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(
+                "ollama_not_ready",
+                attempt=attempt + 1,
+                error=str(exc),
+            )
+            await asyncio.sleep(min(2**attempt, 30))
+
+    if not ollama_ready:
+        logger.error("ollama_connection_failed", message="Starting in degraded mode")
 
     # Core components
     container.embedder = Embedder()
     container.generator = Generator(client=container.ollama_client)
-    container.document_processor = DocumentProcessor(client=container.chroma_client)
+    container.document_processor = DocumentProcessor(
+        client=container.chroma_client,
+        embedder=container.embedder,
+    )
 
     app.state.services = container
 

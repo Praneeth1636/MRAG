@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List
 
+import base64
 import httpx
 
 from app.config import get_settings
@@ -24,11 +25,15 @@ class ImageProcessor(BaseProcessor):
             "or data visible."
         )
 
-        # Ollama's image API expects base64 or path; here we send the file path.
+        # Read and base64-encode image bytes for Ollama.
+        image_bytes = path.read_bytes()
+        image_b64 = base64.b64encode(image_bytes).decode("utf-8")
+
         payload = {
             "model": settings.image_model,
             "prompt": prompt,
-            "images": [str(path)],
+            "images": [image_b64],
+            "stream": False,
         }
 
         async with httpx.AsyncClient(timeout=120.0) as client:
@@ -39,7 +44,7 @@ class ImageProcessor(BaseProcessor):
 
         return [
             ProcessedChunk(
-                content=caption,
+                content=caption if caption else f"[Image: {path.name}]",
                 metadata={
                     "source_file": str(path.name),
                     "page_num": None,

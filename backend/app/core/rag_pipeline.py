@@ -85,8 +85,8 @@ class RAGPipeline:
         )
         retrieval_ms = (time.perf_counter() - start_retrieval) * 1000.0
 
-        context = self._build_context(retrieved_chunks)
-        prompt = self._build_prompt(question, context)
+        context = self.build_context(retrieved_chunks)
+        prompt = self.build_prompt(question, context)
 
         start_generation = time.perf_counter()
         answer_text = await self._generator.generate(prompt, model=config.model)
