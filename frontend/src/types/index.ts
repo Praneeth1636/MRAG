@@ -13,7 +13,7 @@ export interface HealthResponse {
 export interface CollectionInfo {
   name: string;
   document_count: number;
-  metadata: Record<string, any> | null;
+  metadata: Record<string, unknown> | null;
 }
 
 // --- Ingestion ---
@@ -124,7 +124,7 @@ export interface EvalQuestionResult {
   expected_answer: string;
   retrieved_chunk_ids: string[];
   metrics: EvalMetrics;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
 }
 
 export interface LatencySummaryStage {

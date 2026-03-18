@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import { getIngestStatus, ingestDocuments } from "@/lib/api";
 import type { IngestJobDetail } from "@/types";
 
-interface JobSummary extends IngestJobDetail {}
-
 export function IngestPage() {
   const [collectionName, setCollectionName] = useState("");
   const [files, setFiles] = useState<File[]>([]);
-  const [jobs, setJobs] = useState<JobSummary[]>([]);
+  const [jobs, setJobs] = useState<IngestJobDetail[]>([]);
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
