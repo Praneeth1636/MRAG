@@ -19,7 +19,7 @@ from fastapi import (
 import structlog
 
 from app.api.deps import ServiceContainer, get_services
-from app.api.exceptions import FileTooLargeError, UnsupportedFileTypeError
+from app.api.exceptions import UnsupportedFileTypeError
 from app.config import get_settings
 from app.models.schemas import IngestJobDetail, IngestResponse, JobStatus
 
@@ -30,7 +30,6 @@ ALLOWED_EXTENSIONS = {".pdf", ".txt", ".md", ".csv", ".png", ".jpg", ".jpeg", ".
 
 
 def _validate_file(upload: UploadFile) -> None:
-    settings = get_settings()
     ext = Path(upload.filename or "").suffix.lower()
     if ext not in ALLOWED_EXTENSIONS:
         raise UnsupportedFileTypeError(upload.filename or "unknown")

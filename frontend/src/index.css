@@ -4,44 +4,168 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 20% 6%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 20% 6%;
-    --muted: 217.2 32.6% 90%;
-    --muted-foreground: 215 15% 45%;
-    --border: 217.2 14% 80%;
-    --primary: 220 14% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 217.2 32.6% 92%;
-    --secondary-foreground: 222.2 20% 6%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-  }
-
-  .dark {
-    --background: 222 14% 10%;
-    --foreground: 210 20% 96%;
-    --card: 222 18% 14%;
-    --card-foreground: 210 20% 96%;
-    --muted: 220 9% 20%;
-    --muted-foreground: 215 15% 72%;
-    --border: 220 10% 24%;
-    --primary: 220 14% 60%;
-    --primary-foreground: 222 14% 10%;
-    --secondary: 222 16% 18%;
-    --secondary-foreground: 210 20% 96%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --bg: #0a0e1a;
+    --surface-1: #111827;
+    --surface-2: #1a2236;
+    --surface-3: #232d42;
+    --border: #1e293b;
+    --border-hover: #334155;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #22d3ee;
+    --accent-glow: rgba(34, 211, 238, 0.15);
   }
 }
 
 html {
-  @apply dark;
+  color-scheme: dark;
 }
 
 body {
-  @apply bg-background text-foreground antialiased;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: "IBM Plex Sans", -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+@keyframes cursorBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.streaming-cursor::after {
+  content: "█";
+  font-size: 0.85em;
+  animation: cursorBlink 0.7s step-end infinite;
+  color: var(--accent);
+  margin-left: 2px;
+  font-weight: 300;
+}
+
+@keyframes signalShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.signal-bar {
+  height: 2px;
+  background: linear-gradient(90deg, #22d3ee, #a78bfa, #22d3ee);
+  background-size: 200% 100%;
+  animation: signalShift 8s linear infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes drawGauge {
+  from {
+    stroke-dashoffset: var(--circ);
+  }
+}
+
+.anim-fade {
+  animation: fadeIn 0.35s ease-out both;
+}
+
+.anim-slide {
+  animation: slideIn 0.3s ease-out both;
+}
+
+.anim-scale {
+  animation: scaleIn 0.25s ease-out both;
+}
+
+.anim-gauge {
+  animation: drawGauge 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.anim-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.font-heading {
+  font-family: "IBM Plex Mono", monospace;
+  letter-spacing: -0.02em;
+}
+
+.font-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.font-data {
+  font-family: "IBM Plex Mono", monospace;
+  font-variant-numeric: tabular-nums;
 }
 

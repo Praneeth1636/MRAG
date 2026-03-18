@@ -1,32 +1,38 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        card: "hsl(var(--card))",
-        "card-foreground": "hsl(var(--card-foreground))",
-        muted: "hsl(var(--muted))",
-        "muted-foreground": "hsl(var(--muted-foreground))",
-        border: "hsl(var(--border))",
-        primary: "hsl(var(--primary))",
-        "primary-foreground": "hsl(var(--primary-foreground))",
-        secondary: "hsl(var(--secondary))",
-        "secondary-foreground": "hsl(var(--secondary-foreground))",
-        destructive: "hsl(var(--destructive))",
-        "destructive-foreground": "hsl(var(--destructive-foreground))"
+        bg: "#0a0e1a",
+        "surface-1": "#111827",
+        "surface-2": "#1a2236",
+        "surface-3": "#232d42",
+        "border-default": "#1e293b",
+        "border-hover": "#334155",
+        accent: "#22d3ee",
       },
-      borderRadius: {
-        lg: "0.75rem",
-        md: "0.5rem"
-      }
-    }
+      fontFamily: {
+        sans: ['"IBM Plex Sans"', "-apple-system", "sans-serif"],
+        mono: ['"IBM Plex Mono"', "monospace"],
+      },
+      boxShadow: {
+        glow: "0 0 20px rgba(34,211,238,0.15)",
+        "glow-emerald": "0 0 20px rgba(52,211,153,0.12)",
+        lifted: "0 8px 32px rgba(0,0,0,0.4)",
+        deep: "0 16px 48px rgba(0,0,0,0.5)",
+      },
+      animation: {
+        fade: "fadeIn 0.35s ease-out both",
+        slide: "slideIn 0.3s ease-out both",
+        scale: "scaleIn 0.25s ease-out both",
+        gauge: "drawGauge 1.4s cubic-bezier(0.22,1,0.36,1) both",
+        pulse: "pulse 2s ease-in-out infinite",
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 };
 
 export default config;
